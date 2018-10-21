@@ -40,7 +40,7 @@ public class Navigator {
                 break;
             }
 
-            final FlatCoordinate possibleNext = direction.scale(maxDistanceFlat);
+            final FlatCoordinate possibleNext = current.plus(direction.scale(maxDistanceFlat));
 
             double h = heightMap.score(current);
             double nH = heightMap.score(possibleNext);

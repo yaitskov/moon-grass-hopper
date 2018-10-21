@@ -61,4 +61,11 @@ public class FlatCoordinate {
                 .y(x * Math.sin(angleRad) + y * Math.cos(angleRad))
                 .build();
     }
+
+    public FlatCoordinate plus(FlatCoordinate shift) {
+        return FlatCoordinate.builder()
+                .x(x + shift.getX())
+                .y(y + shift.getY())
+                .build();
+    }
 }

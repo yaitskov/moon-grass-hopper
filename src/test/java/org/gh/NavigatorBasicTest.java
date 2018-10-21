@@ -1,7 +1,9 @@
 package org.gh;
 
 import static org.gh.FlatCoordinate.cof;
+import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
@@ -44,6 +46,12 @@ public class NavigatorBasicTest {
         assertThat(hops.size(),
                 allOf(greaterThan(2),
                         lessThan(4)));
-        assertThat(hops, hasItem(hasProperty("y", equalTo(0.0))));
+        assertThat(hops,
+                everyItem(
+                        allOf(
+                                hasProperty("turnAngle", equalTo(0.0)),
+                                hasProperty("speedMs", closeTo(5.0, 0.001)),
+                                hasProperty("source",
+                                        hasProperty("y", closeTo(0.0, 0.001))))));
     }
 }
