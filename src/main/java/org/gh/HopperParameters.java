@@ -9,6 +9,7 @@ public class HopperParameters {
     private double maxJumpSpeedMs;
     private double maxTurnAngleDeg;
     private double maxJumpAngleDeg;
+    private double maxSlopAngleDeg;
 
     private double powerHop;
     private double batteryCapacity;

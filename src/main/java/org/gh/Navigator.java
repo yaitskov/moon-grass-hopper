@@ -9,6 +9,7 @@ import java.util.List;
 @Builder
 public class Navigator {
     private final HeightMap heightMap;
+    private final SlopMap slopMap;
     private final HopperParameters hopperParameters;
     private final MissionParameters missionParameters;
     private final List<TravelAction> arsenal;
