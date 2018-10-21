@@ -68,4 +68,20 @@ public class NavigatorBasicTest {
                                 hasProperty("turnAngle", equalTo(45.0)),
                                 hasProperty("speedMs", closeTo(5.0, 0.001)))));
     }
+
+    @Test
+    public void jumpOver() {
+        final List<Hop> hops = navigator(CircleHeightMap
+                .builder()
+                .radius(10)
+                .matchScore(2)
+                .center(FlatCoordinate.cof(50, 0))
+                .build())
+                .findRoute(cof(0, 0), cof(100, 0));
+        assertThat(hops,
+                hasItems(
+                        allOf(
+                                hasProperty("turnAngle", equalTo(0.0)),
+                                hasProperty("speedMs", closeTo(5.0, 0.001)))));
+    }
 }

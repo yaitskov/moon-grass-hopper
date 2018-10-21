@@ -8,6 +8,7 @@ import lombok.Builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Builder
 public class Navigator {
@@ -46,7 +47,20 @@ public class Navigator {
             double nH = heightMap.score(possibleNext);
 
             if (nH > h) {
-                if (turnAngle > 90) {
+                // find where nH is reached
+                Optional<FlatCoordinate> oPossi = findXWhereH(direction, current, h, nH);
+                if (oPossi.isPresent()) {
+                    result.add(Hop
+                            .builder()
+                            .jumpAngle(45.0)
+                            .speedMs(hopperParameters.getMaxJumpSpeedMs())
+                            .turnAngle(turnAngle)
+                            .source(current)
+                            .build());
+                    current = oPossi.get();
+                    turnAngle = 0;
+                    direction = originDirection;
+                } else if (turnAngle > 90) {
                     // retreat
                     if (result.isEmpty()) {
                         throw new RuntimeException("no way");
@@ -80,5 +94,42 @@ public class Navigator {
 
     private double timeToFall(double startSpeed, double acceleration) {
         return 2 * startSpeed / acceleration;
+    }
+
+    private Optional<FlatCoordinate> findXWhereH(
+            FlatCoordinate unit, FlatCoordinate c, double h, double hN) {
+        double halfG = - missionParameters.getGravitaionKgMs() / 2;
+        double v0y = sin(toRadians(45))
+                * hopperParameters.getMaxJumpSpeedMs();
+        double d = v0y * v0y - 4 * halfG * (h - hN);
+
+        if (d <= 0) {
+            return Optional.empty(); //
+        }
+        double dS = Math.sqrt(d);
+        double t1 = (-v0y + dS) / (2 * halfG);
+
+        final double a1 = diff(t1, v0y, halfG);
+        if (a1 < 0) {
+//        if (t1 > 0) {
+            return Optional.of(c.plus(unit.scale(x(t1))));
+        }
+        double t2 = (-v0y - dS) / (2 * halfG);
+        final double a2 = diff(t2, v0y, halfG);
+        if (a2 < 0) {
+//        if (t2 > 0) {
+            return Optional.of(c.plus(unit.scale(x(t2))));
+        }
+        throw new IllegalArgumentException("no decrease");
+//        throw new IllegalArgumentException("negative time");
+    }
+
+    private double diff(double t, double v0y, double halfG) {
+        return 2 * halfG * t + v0y;
+    }
+
+    private double x(double t) {
+        return t * cos(toRadians(45))
+                * hopperParameters.getMaxJumpSpeedMs();
     }
 }
