@@ -68,4 +68,8 @@ public class FlatCoordinate {
                 .y(y + shift.getY())
                 .build();
     }
+
+    public String toString() {
+        return "(" + x + ";" + y + ")";
+    }
 }

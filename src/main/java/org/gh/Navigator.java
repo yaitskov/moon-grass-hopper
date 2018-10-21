@@ -36,7 +36,7 @@ public class Navigator {
 
         while (true) {
             double distance = destination.distance(current);
-            if (distance <= maxDistanceFlat) {
+            if (distance < maxDistanceFlat) {
                 break;
             }
 
