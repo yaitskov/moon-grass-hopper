@@ -1,9 +1,16 @@
 package org.gh;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.SneakyThrows;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -21,7 +28,15 @@ public class EntryPoint {
         double destY = Double.parseDouble(args[4]);
         String outPutFile = args[5];
 
-        HeightMap heightMap = new PngRgbHeightMap(ImageIO.read(new File(heightMapFile)));
+        final File file = new File(heightMapFile);
+        InputStream is = new FileInputStream(file);
+        byte[] b = new byte[(int) file.length()];
+        is.read(b);
+
+
+        final ByteBuffer wrap = ByteBuffer.wrap(b);
+        wrap.order(ByteOrder.LITTLE_ENDIAN);
+        HeightMap heightMap = new BinHeightMap(5000, wrap);
 
         Navigator navigator = Navigator
                 .builder()
@@ -39,11 +54,13 @@ public class EntryPoint {
                         .build())
                 .build();
 
-        ObjectMapper om = new ObjectMapper();
+        ObjectMapper om = new ObjectMapper()
+                .enable(SerializationFeature.INDENT_OUTPUT);
 
+        final List<Hop> route = navigator.findRoute(FlatCoordinate.cof(sourceX, sourceY),
+                FlatCoordinate.cof(destX, destY));
         om.writeValue(
                 new File(outPutFile),
-                navigator.findRoute(FlatCoordinate.cof(sourceX, sourceY),
-                        FlatCoordinate.cof(destX, destY)));
+                route);
     }
 }
