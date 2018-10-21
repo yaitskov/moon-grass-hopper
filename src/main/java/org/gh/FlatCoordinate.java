@@ -15,6 +15,10 @@ public class FlatCoordinate {
     private double x;
     private double y;
 
+    public static FlatCoordinate cof(double x, double y) {
+        return new FlatCoordinate(x, y);
+    }
+
     public double length() {
         return Math.sqrt(x*x + y*y);
     }
@@ -39,6 +43,22 @@ public class FlatCoordinate {
                 .builder()
                 .x(x / l)
                 .y(y / l)
+                .build();
+    }
+
+    public FlatCoordinate scale(double c) {
+        return FlatCoordinate
+                .builder()
+                .x(x * c)
+                .y(y * c)
+                .build();
+    }
+
+    public FlatCoordinate rotateCcw(double angleDeg) {
+        final double angleRad = Math.toRadians(angleDeg);
+        return FlatCoordinate.builder()
+                .x(x * Math.cos(angleRad) - y * Math.sin(angleRad))
+                .y(x * Math.sin(angleRad) + y * Math.cos(angleRad))
                 .build();
     }
 }

@@ -1,14 +1,16 @@
 package org.gh;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MissionParameters {
-    private double allowedErrorM;
-    private int maxHops;
-    private double gravitaionKgMs = 9.8;
+    private double gravitaionKgMs = 1.3;
 }
