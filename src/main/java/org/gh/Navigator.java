@@ -84,9 +84,10 @@ public class Navigator {
                     if (result.isEmpty()) {
                         throw new RuntimeException("no way");
                     } else {
-                        turnAngle = baseTurn;
-                        jumpAngleDeg = 45;
-                        FlatCoordinate wasSource = result.get(result.size() - 1).getSource();
+                        final Hop hop = result.get(result.size() - 1);
+                        turnAngle = hop.getTurnAngle() + baseTurn;
+                        jumpAngleDeg = hop.getJumpAngle();
+                        FlatCoordinate wasSource = hop.getSource();
                         result.remove(result.size() - 1);
                         current = wasSource;
                     }

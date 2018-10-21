@@ -14,4 +14,5 @@ public class Hop {
     private double jumpAngle;
     private double speedMs;
     private FlatCoordinate source;
+    private int attempts;
 }
