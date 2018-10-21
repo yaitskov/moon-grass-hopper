@@ -5,27 +5,21 @@ import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
 
 public class NavigatorBasicTest {
-    Navigator sut;
-
-    @Before
-    public void setUp() {
-        sut = Navigator
+    public Navigator navigator(HeightMap heightMap) {
+        return Navigator
                 .builder()
-                .heightMap(new HeightMap())
+                .heightMap(heightMap)
                 .slopMap(new SlopMap())
                 .missionParameters(MissionParameters
                         .builder()
@@ -42,7 +36,8 @@ public class NavigatorBasicTest {
 
     @Test
     public void sunnyDay() {
-        final List<Hop> hops = sut.findRoute(cof(0, 0), cof(100, 0));
+        final List<Hop> hops = navigator(new FlatHeightMap())
+                .findRoute(cof(0, 0), cof(100, 0));
         assertThat(hops.size(),
                 allOf(greaterThan(3),
                         lessThan(5)));
@@ -56,18 +51,21 @@ public class NavigatorBasicTest {
     }
 
     @Test
-    @Ignore
     public void oneTurnRestStraight() {
-        final List<Hop> hops = sut.findRoute(cof(0, 0), cof(100, 0));
-        assertThat(hops.size(),
-                allOf(greaterThan(2),
-                        lessThan(4)));
+        final List<Hop> hops = navigator(CircleHeightMap
+                .builder()
+                .radius(10)
+                .matchScore(10000)
+                .center(FlatCoordinate.cof(50, 0))
+                .build())
+                .findRoute(cof(0, 0), cof(100, 0));
         assertThat(hops,
-                everyItem(
+                hasItems(
                         allOf(
                                 hasProperty("turnAngle", equalTo(0.0)),
-                                hasProperty("speedMs", closeTo(5.0, 0.001)),
-                                hasProperty("source",
-                                        hasProperty("y", closeTo(0.0, 0.001))))));
+                                hasProperty("speedMs", closeTo(5.0, 0.001))),
+                        allOf(
+                                hasProperty("turnAngle", equalTo(45.0)),
+                                hasProperty("speedMs", closeTo(5.0, 0.001)))));
     }
 }
